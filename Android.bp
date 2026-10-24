@@ -10,7 +10,11 @@
 // exported headers, breaking future consumers. vendor/product_available,
 // apex_available, min_sdk_version dropped (not in source cc_library);
 // export_shared_lib_headers/export_header_lib_headers/shared_libs mirrored
-// from source system/libvintf/Android.bp.
+// from source system/libvintf/Android.bp. libkernelconfigs added 2026-10-25
+// (recipe apex/libvintf @ b628006, 0002 patch): los-21-tree cc_library_static
+// absent from android14-release; payload artifacts built end-to-end by the
+// recipe (makeapex clean build, md5s below in SHADOW.txt); KernelConfigs.h
+// byte-identical to los-21 tree (md5 51cefa32).
 
 package {
     default_applicable_licenses: ["Android-Apache-2.0"],
@@ -45,4 +49,22 @@ cc_prebuilt_library {
     static: {
         srcs: ["lib/libvintf.a"],
     },
+}
+
+cc_prebuilt_library_static {
+    name: "libkernelconfigs",
+    host_supported: true,
+    recovery_available: true,
+    check_elf_files: false,
+    export_include_dirs: [
+        "include",
+    ],
+    shared_libs: [
+        "libbase",
+        "libz",
+    ],
+    prefer: true,
+    srcs: [
+        "lib/libkernelconfigs.a",
+    ],
 }
