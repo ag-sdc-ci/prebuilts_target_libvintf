@@ -1,0 +1,55 @@
+shadow prebuilt repo: libvintf (target)
+  upstream: system/libvintf
+  api-level: 34 payload (branch 34-20261024)
+  provenance: LOCAL makeapex build in ag-build container (user builder) 2026-10-24
+    17:39Z + 17:41Z static-lib pass - forgejo runner down org-wide, CI route
+    unavailable. Signed apexes org.blisslabs.ag.ext.libvintf(.dev).apex + .idsig
+    (blobs deleted after extraction, not tracked).
+  recipe: apex/libvintf @ ff847a9 (standalone local build: makedepends resolved
+    via new host header packages libaidlmetadata-headers + libhidlmetadata-headers
+    [aur/, committed -S, NOT pushed - runner down]; build-local host-inc staging of
+    aidl/hidl metadata.h + tinyxml2.h + com_android_apex.h + fmt/; -I ext.core
+    [utils/], ext.zlib, ext.selinux, ext.libbase apex include dirs; vendored
+    libkver source [packages/modules/Gki @ android-14.0.0_r67] as second source=
+    entry; 0001-libvintf-standalone-apex-info.patch vendors xsdc
+    apex-info-list-tinyxml compat sources [com_android_apex.{h,cpp}+enums] after
+    linkerconfig 0001 precedent - source system/apex absent from los-21 split
+    tree; ninja targets out/lib64/libvintf.so + libvintf.a)
+  layout: flattened root (payload contents at repo root)
+  modules: libvintf (cc_prebuilt_library shared+static, prefer:true,
+    host_supported+recovery_available mirrored from source; export_include_dirs
+    include; export_shared_lib_headers libbase + export_header_lib_headers
+    libaidlmetadata_headers/libhidlmetadata_headers mirrored; shared_libs
+    libbase/liblog/libselinux/libtinyxml2/libz per DT_NEEDED)
+  payload: lib/libvintf.so (4271560B, ELF x86_64 Android 34 NDK r30, md5
+    c568f46e...) + lib/libvintf.a (12479772B, 31 members incl. embedded libkver
+    objects kernel_release.o/kmi_version.o via ar ADDLIB, md5 b5839902...) +
+    include/vintf/ 46 headers. lib/libkver.a (114066B, md5 d7717f82...) kept
+    UNEXPOSED - no Android.bp module: libvintf.a already embeds kver objects,
+    and a prefer:true libkver prebuilt would shadow source
+    packages/modules/Gki/libkver without its include/kver/ headers.
+    Dummies (libdummy_*, _libdummy) and etc/linker.config.json filtered.
+  build deps (host track): libaidlmetadata-headers 14.0.0_r67-1 +
+    libhidlmetadata-headers 14.0.0_r67-1 (new, /localrepo ag-local; install
+    /usr/include/{aidl,hidl}/metadata.h; md5-identical to los-21 tree copies);
+    libaidlmetadata/libhidlmetadata static libs NOT needed (host tools only).
+  notes: HOST TRACK - vintf, checkvintf, assemble_vintf, libassemblevintf,
+    libvintf_fcm_exclude, libvts_vintf_test_common, libvintf_local_headers,
+    analyze_matrix NOT built and NOT faked here (host binaries/tools track,
+    aur/libvintf host PKGBUILD owns that half; no prebuilts_host_libvintf repo
+    exists - dual-slice N/A). TEST/XSD/MOCK dropped+noted: libvintf_test,
+    vintf_object_test, libvintffm/vintffm, libaidlvintf_test_helper,
+    libvintf-test-native, xsd/{compatibilityMatrix,halManifest} vts validators,
+    libkver_test/libkver_fuzzer. DIVERGENCE: payload built from googlesource
+    android14-release; los-21 tree source is newer (udc-release snap 10242133 +
+    Lineage): header content differs (VintfObjectBuilder, getNativeInstances,
+    SepolicyVersion present in tree, not in payload headers) - headers kept
+    matching the BUILT .so per scf precedent. GAP: vintf/KernelConfigs.h
+    (module libkernelconfigs, los-21-only addition, absent from
+    android14-release) NOT shipped - consumers
+    frameworks/base/core/jni/android_os_Debug.cpp and
+    frameworks/native/libs/input/KeyLayoutMap.cpp #include
+    <vintf/KernelConfigs.h> and will NOT compile against this shadow until
+    libkernelconfigs is onboarded separately; built libvintf.a likewise does
+    not embed libkernelconfigs (source whole_static_libs had it).
+  date: 2026-10-24
