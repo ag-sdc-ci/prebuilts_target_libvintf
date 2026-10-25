@@ -35,6 +35,10 @@ cc_prebuilt_library {
         "libaidlmetadata_headers",
         "libhidlmetadata_headers",
     ],
+    header_libs: [
+        "libaidlmetadata_headers",
+        "libhidlmetadata_headers",
+    ],
     shared_libs: [
         "libbase",
         "liblog",
